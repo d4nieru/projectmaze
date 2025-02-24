@@ -1,13 +1,13 @@
 using UnityEngine;
-
 public class PlayerInteraction : MonoBehaviour
 {
-    [SerializeField] private float objectInteractDistance = 3f;  // Distance pour les objets
-    [SerializeField] private float doorInteractDistance = 5f;    // Distance pour les portes
-    [SerializeField] private KeyCode interactKey = KeyCode.E;    // Touche d'interaction
-
+    [SerializeField] private float objectInteractDistance = 3f;
+    [SerializeField] private float doorInteractDistance = 5f;
+    [SerializeField] private KeyCode interactKey = KeyCode.E;
+    
     private Camera playerCamera;
-    private bool canInteract = true; // Cooldown d'interaction
+    private bool canInteract = true;
+    private DoorInteractable currentDoor; // Pour suivre la dernière porte
 
     void Start()
     {
@@ -18,29 +18,33 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (Input.GetKeyDown(interactKey) && canInteract)
         {
-            canInteract = false; // Bloque temporairement l'interaction
-
             Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, doorInteractDistance)) // Vérifie d'abord les portes
+            
+            // Vérifie d'abord les portes
+            if (Physics.Raycast(ray, out RaycastHit hit, doorInteractDistance))
             {
                 DoorInteractable door = hit.collider.GetComponent<DoorInteractable>();
                 if (door != null)
                 {
-                    door.Interact();
-                    // Utilise la durée de l'animation de la porte pour éviter de trop vite interagir à nouveau
-                    float animationTime = door.GetAnimationLength();
-                    Invoke(nameof(ResetInteraction), animationTime); // Réactive l'interaction après la fin de l'animation
-                    return; // Empêche de tester les objets si une porte a été trouvée
+                    if (door.Interact()) // Si l'interaction réussit
+                    {
+                        canInteract = false;
+                        currentDoor = door;
+                        Invoke(nameof(ResetInteraction), door.GetAnimationDuration());
+                        return;
+                    }
                 }
             }
 
-            if (Physics.Raycast(ray, out hit, objectInteractDistance)) // Vérifie ensuite les objets
+            // Vérification des objets
+            if (Physics.Raycast(ray, out hit, objectInteractDistance))
             {
                 ItemInteractable item = hit.collider.GetComponent<ItemInteractable>();
                 if (item != null)
                 {
                     item.Interact();
-                    Invoke(nameof(ResetInteraction), 0.5f); // Temps fixe pour éviter les spams
+                    canInteract = false;
+                    Invoke(nameof(ResetInteraction), 0.5f);
                 }
             }
         }
@@ -48,6 +52,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void ResetInteraction()
     {
-        canInteract = true; // Réactive l'interaction après un délai
+        canInteract = true;
+        currentDoor = null;
     }
 }
