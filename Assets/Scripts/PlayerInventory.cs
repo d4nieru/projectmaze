@@ -12,6 +12,7 @@ public class PlayerInventory : MonoBehaviour
     public UnityEvent<PlayerInventory> OnGemCollected;
     public UnityEvent<PlayerInventory> OnItemCollected;
     public UnityEvent OnAllCollected;
+    [SerializeField] private FinalDoorCinematic finalDoorCinematic;
 
     void Awake()
     {
@@ -51,8 +52,14 @@ public class PlayerInventory : MonoBehaviour
     {
         if (numberOfGems >= totalGems && numberOfItems >= totalItems)
         {
-            Debug.Log("Tous les objets ont été collectés, ouverture de la porte !");
-            OnAllCollected.Invoke(); // Déclenche l’événement pour ouvrir la porte
+            // Ajouter un léger délai avant de lancer la cinématique pour éviter que l'item final ne bug
+            Invoke(nameof(StartCinematic), 1f);
         }
     }
+
+    private void StartCinematic()
+    {
+        finalDoorCinematic.PlayCinematic();
+    }
+
 }

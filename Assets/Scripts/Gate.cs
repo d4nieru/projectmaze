@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class Gate : MonoBehaviour
 {
-    [SerializeField] private GameObject playerObject; // À assigner dans l'Inspector
-    private PlayerInventory playerInventory;
+    [SerializeField] private FinalDoorCinematic finalDoorCinematic;
     private Animator animator;
     private bool isOpen = false;
 
@@ -11,25 +10,13 @@ public class Gate : MonoBehaviour
     {
         animator = GetComponent<Animator>();
 
-        // Vérifie si un joueur a été assigné
-        if (playerObject != null)
+        if (finalDoorCinematic != null)
         {
-            playerInventory = playerObject.GetComponent<PlayerInventory>();
+            finalDoorCinematic.OnAllCollected.AddListener(OpenDoor);
         }
         else
         {
-            Debug.LogError("AutoDoor : Aucun joueur assigné dans l'Inspector !");
-            return;
-        }
-
-        // Vérifie si PlayerInventory existe sur l'objet assigné
-        if (playerInventory != null)
-        {
-            playerInventory.OnAllCollected.AddListener(OpenDoor);
-        }
-        else
-        {
-            Debug.LogError("AutoDoor : L'objet assigné ne possède pas de PlayerInventory !");
+            Debug.LogError("Gate : FinalDoorCinematic n'est pas assigné !");
         }
     }
 

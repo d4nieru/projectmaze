@@ -2,80 +2,67 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] Camera playerCamera;
+    [SerializeField] private Camera playerCamera;
 
-    [SerializeField] float walkSpeed;
-    [SerializeField] float sprintSpeed;
-    [SerializeField] float jumpForce;
-    [SerializeField] float gravity;
+    [SerializeField] private float walkSpeed = 5f;
+    [SerializeField] private float sprintSpeed = 8f;
+    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float gravity = 9.81f;
 
     [Space]
-    [SerializeField] float cameraSensitivity;
-    [SerializeField] float defaultFOV;
-    [SerializeField] float sprintFOV;
-    [SerializeField] float fovSmooth;
-    [SerializeField] float cameraAngle = 80f;
+    [SerializeField] private float sensitivityX = 2f;
+    [SerializeField] private float sensitivityY = 2f;
+    [SerializeField] private float defaultFOV = 60f;
+    [SerializeField] private float sprintFOV = 75f;
+    [SerializeField] private float fovSmooth = 8f;
+    [SerializeField] private float cameraAngle = 80f;
 
-    float speed;
-    float verticalVelocity;
-    float initFOV;
-    float cameraRotation;
+    [Header("Head Bobbing")]
+    [SerializeField] private float bobFrequency = 6f;
+    [SerializeField] private float bobAmplitude = 0.05f;
 
-    bool isSprinting;
+    private float verticalVelocity;
+    private float cameraRotation;
+    private float speed;
+    private float defaultYPos;
+    private float headBobTimer = 0f;
+    private bool isSprinting;
+    private float targetFOV;
 
-    CharacterController controller;
+    private CharacterController controller;
 
     void Awake()
     {
         controller = GetComponent<CharacterController>();
-
-        playerCamera.fieldOfView = defaultFOV;
-        initFOV = playerCamera.fieldOfView;
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        defaultYPos = playerCamera.transform.localPosition.y;
+        targetFOV = defaultFOV;
     }
 
     void Update()
     {
-        if (Time.timeScale == 0f) return; // Empêche toute mise à jour si le jeu est en pause
+        if (Time.timeScale == 0f) return; // Empêche le mouvement en pause
 
         HandleMovement();
+        HandleCamera();
+        ApplyHeadBobbing();
+        HandleFOV();
     }
 
     void HandleMovement()
     {
-        // Movement
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
         Vector3 moveVector = transform.forward * vertical + transform.right * horizontal;
 
         isSprinting = Input.GetKey(KeyCode.LeftShift);
-
-        if (isSprinting)
-        {
-            speed = sprintSpeed;
-
-            if (playerCamera.fieldOfView != sprintFOV)
-            {
-                playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, sprintFOV, fovSmooth * Time.deltaTime);
-            }
-        }
-        else
-        {
-            speed = walkSpeed;
-
-            if (playerCamera.fieldOfView != initFOV)
-            {
-                playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, initFOV, fovSmooth * Time.deltaTime);
-            }
-        }
+        speed = isSprinting ? sprintSpeed : walkSpeed;
 
         if (controller.isGrounded)
         {
             verticalVelocity = 0;
-
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 verticalVelocity = jumpForce;
@@ -84,18 +71,39 @@ public class PlayerController : MonoBehaviour
 
         verticalVelocity -= gravity * Time.deltaTime;
         moveVector.y = verticalVelocity;
+        controller.Move(moveVector * (speed * Time.deltaTime));
+    }
 
-        controller.Move(moveVector * (speed / 100));
-
-        // Camera Movement
-        float x = Input.GetAxisRaw("Mouse X") * cameraSensitivity;
-        float y = Input.GetAxisRaw("Mouse Y") * cameraSensitivity;
+    void HandleCamera()
+    {
+        float x = Input.GetAxisRaw("Mouse X") * sensitivityX;
+        float y = Input.GetAxisRaw("Mouse Y") * sensitivityY;
 
         transform.rotation *= Quaternion.Euler(0, x, 0);
-
         cameraRotation -= y;
         cameraRotation = Mathf.Clamp(cameraRotation, -cameraAngle, cameraAngle);
 
         playerCamera.transform.localRotation = Quaternion.Euler(cameraRotation, 0, 0);
+    }
+
+    void ApplyHeadBobbing()
+    {
+        if (controller.velocity.magnitude > 0.1f && controller.isGrounded)
+        {
+            headBobTimer += Time.deltaTime * bobFrequency;
+            float bobOffset = Mathf.Sin(headBobTimer) * bobAmplitude;
+
+            playerCamera.transform.localPosition = new Vector3(
+                playerCamera.transform.localPosition.x,
+                defaultYPos + bobOffset,
+                playerCamera.transform.localPosition.z
+            );
+        }
+    }
+
+    void HandleFOV()
+    {
+        targetFOV = isSprinting ? sprintFOV : defaultFOV;
+        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, fovSmooth * Time.deltaTime);
     }
 }
