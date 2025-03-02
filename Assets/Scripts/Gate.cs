@@ -6,6 +6,13 @@ public class Gate : MonoBehaviour
     private Animator animator;
     private bool isOpen = false;
 
+    AudioManager audioManager;
+
+    void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -24,7 +31,9 @@ public class Gate : MonoBehaviour
     {
         if (!isOpen) // Vérifie que la porte est fermée avant de l'ouvrir
         {
+            audioManager.PlaySFX(audioManager.finalStoneDoorOpen);
             animator.SetTrigger("Open");
+            
             isOpen = true; // Empêche d'ouvrir plusieurs fois
         }
     }

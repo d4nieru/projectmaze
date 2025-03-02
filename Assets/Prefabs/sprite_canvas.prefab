@@ -10,15 +10,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 6e18442aa38d2354b90e96f8a2f51e74, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.9289489
+      value: -2.928949
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6e18442aa38d2354b90e96f8a2f51e74, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 0.99999994
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6e18442aa38d2354b90e96f8a2f51e74, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -6.814883
+      value: -4.814883
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 6e18442aa38d2354b90e96f8a2f51e74, type: 3}
       propertyPath: m_LocalRotation.w
@@ -90,7 +90,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.50000024, y: 0.50000024, z: 5.3290705e-15}
+  m_Size: {x: 0.8, y: 0.8, z: 0.5}
   m_Center: {x: -0.25000006, y: -0.00000005960465, z: -0.0000000109278515}
 --- !u!114 &6790161164950476998
 MonoBehaviour:
@@ -116,4 +116,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc41ba9d04e00e244ae8205225377ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCamera: {fileID: 0}

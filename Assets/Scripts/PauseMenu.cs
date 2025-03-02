@@ -6,6 +6,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject pauseMenu;
     [SerializeField] private KeyCode pauseGameKey = KeyCode.Escape;
     [SerializeField] private PlayerController playerController;  // Référence publique au PlayerController
+    [SerializeField] private AudioManager audioManager;  // Référence à AudioManager
 
     private bool isPaused = false;
 
@@ -14,6 +15,16 @@ public class PauseMenu : MonoBehaviour
         if (playerController == null)
         {
             Debug.LogError("PlayerController is not assigned in the Inspector!");
+        }
+        
+        if (audioManager == null)
+        {
+            audioManager = Object.FindFirstObjectByType<AudioManager>();
+            
+            if (audioManager == null)
+            {
+                Debug.LogError("AudioManager is not found in the scene!");
+            }
         }
     }
 
@@ -40,6 +51,12 @@ public class PauseMenu : MonoBehaviour
             playerController.enabled = false;
         }
 
+        // Mute tous les sons
+        if (audioManager != null)
+        {
+            audioManager.MuteAllSounds();
+        }
+
         // Afficher le curseur
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -55,6 +72,12 @@ public class PauseMenu : MonoBehaviour
         if (playerController != null)
         {
             playerController.enabled = true;
+        }
+
+        // Unmute tous les sons
+        if (audioManager != null)
+        {
+            audioManager.UnmuteAllSounds();
         }
 
         // Cacher le curseur

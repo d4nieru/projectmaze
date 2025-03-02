@@ -42,7 +42,7 @@ public class FinalDoorCinematic : MonoBehaviour
         }
 
         // Attendre encore x secondes après l'animation
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(6f);
 
         // Revenir à la caméra du joueur
         cinematicCamera.SetActive(false);

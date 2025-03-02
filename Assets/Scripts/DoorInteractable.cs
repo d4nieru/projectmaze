@@ -9,6 +9,13 @@ public class DoorInteractable : MonoBehaviour
     [SerializeField] private float animationDuration = 1f; // Durée fixe de l'animation
     public bool IsAnimating => isAnimating; // Propriété publique pour vérifier l'état
 
+    AudioManager audioManager;
+
+    void Awake()
+    {
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -22,10 +29,12 @@ public class DoorInteractable : MonoBehaviour
         
         if (isOpen)
         {
+            audioManager.PlaySFX(audioManager.oldWoodDoorClose);
             animator.SetTrigger("Close");
         }
         else
         {
+            audioManager.PlaySFX(audioManager.oldWoodDoorOpen);
             animator.SetTrigger("Open");
         }
         

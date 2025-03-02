@@ -30,7 +30,7 @@ public class PlayerInventory : MonoBehaviour
     {
         // Récupère le nombre total de gems et d'items dans la scène au début
         totalGems = Object.FindObjectsByType<Gem>(FindObjectsSortMode.None).Length;
-        totalItems = Object.FindObjectsByType<Item>(FindObjectsSortMode.None).Length;
+        totalItems = Object.FindObjectsByType<ItemInteractable>(FindObjectsSortMode.None).Length;
     }
     
 

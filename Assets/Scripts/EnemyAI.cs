@@ -25,11 +25,14 @@ public class EnemyAI : MonoBehaviour
 
     [SerializeField] private GameOverMenu gameOverMenu;
 
+    private AudioManager audioManager;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         currentTarget = pointA;
         GoToNextPatrolPoint();
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
 
         if (alertQuad == null)
         {
@@ -143,7 +146,8 @@ public class EnemyAI : MonoBehaviour
     void BeginChase()
     {
         agent.isStopped = false;
-        agent.speed *= 1.5f;
+        agent.speed *= 1.2f;
+        audioManager.FadeInMusic(audioManager.enemyChasingPlayer, 2f);
     }
 
     void ChasePlayer()
@@ -161,6 +165,13 @@ public class EnemyAI : MonoBehaviour
                 isChasing = false;
                 agent.speed /= 1.5f;
                 lostTimer = 0f;
+
+                // Fade out de la musique de poursuite
+                audioManager.FadeOutMusic(4f);
+
+                // Relance la musique d'ambiance avec un fade in
+                audioManager.FadeInMusic(audioManager.backgroundMusic, 4f);
+
                 GoToNextPatrolPoint();
             }
         }
@@ -175,7 +186,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Le joueur a été attrapé !");
+            audioManager.StopAllAndPlay(audioManager.gameOver);
             gameOverMenu.showGameOverMenu();
             agent.isStopped = true;
         }

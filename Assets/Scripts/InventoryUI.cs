@@ -14,7 +14,7 @@ public class InventoryUI : MonoBehaviour
     {
         // Compter les objets dès le début
         //totalGems = GameObject.FindGameObjectsWithTag("Gem").Length;
-        totalItems = Object.FindObjectsByType<Item>(FindObjectsSortMode.None).Length;
+        totalItems = Object.FindObjectsByType<ItemInteractable>(FindObjectsSortMode.None).Length;
         totalGems = Object.FindObjectsByType<Gem>(FindObjectsSortMode.None).Length;
 
         // Trouver l'inventaire du joueur
