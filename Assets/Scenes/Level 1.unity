@@ -2913,10 +2913,10 @@ MonoBehaviour:
   pointA: {fileID: 1408518604}
   pointB: {fileID: 116380966}
   player: {fileID: 1442334204}
-  detectionRange: 10
-  chaseDistance: 15
+  detectionRange: 6
+  chaseDistance: 12
   lostTime: 5
-  alertQuad: {fileID: 590921396}
+  alertQuad: {fileID: 584321576}
   alertDisplayTime: 2
   gameOverMenu: {fileID: 459718038}
 --- !u!65 &1097188252
@@ -4354,7 +4354,7 @@ MonoBehaviour:
   pauseMenu: {fileID: 772437089}
   pauseGameKey: 112
   playerController: {fileID: 1442334202}
-  audioManager: {fileID: 0}
+  audioManager: {fileID: 927301992}
 --- !u!136 &1442334208
 CapsuleCollider:
   m_ObjectHideFlags: 0
